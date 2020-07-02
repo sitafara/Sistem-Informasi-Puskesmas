@@ -1,0 +1,402 @@
+
+		MODUL 1
+
+SQL> create tablespace sita07083
+  2  datafile 'D:\BASIS DATA\PRAKTIKUM MODUL 1\sita07083.dbf'
+  3  size 30m;
+
+SQL> create user sitafara07083
+  2  identified by sita
+  3  default tablespace sita07083
+  4  quota 30m on sita07083;
+
+SQL> grant all privileges to sitafara07083;
+
+SQL> conn sitafara07083/sita;
+
+SQL> create table Pasien_07083
+  2  (
+  3  Id_pasien          INTEGER         not null,
+  4  Nama_pasien        VARCHAR2(25),
+  5  Umur_pasien        NUMBER(9),
+  6  Notlpn             NUMBER(12),
+  7  TTL                DATE,
+  8  Jenis_kelamin      VARCHAR2(20),
+  9  Alamat_pasien      VARCHAR2(30),
+ 10  constraint PK_Pasien primary key (Id_pasien)
+ 11  );
+
+SQL> create table Poli_07083
+  2  (
+  3  Id_poli            INTEGER         not null,
+  4  Id_dokter          INTEGER,
+  5  Nama_poli          VARCHAR2(20),
+  6  Keterangan_poli    VARCHAR2(100),
+  7  constraint PK_Poli primary key (Id_poli)
+  8  );
+
+SQL> create table Dokter_07083
+  2  (
+  3  Id_dokter          INTEGER         not null,
+  4  Nama_dokter        VARCHAR2(50),
+  5  Spesialis          VARCHAR2(25),
+  6  TTL                DATE,
+  7  Jenis_kelamin      VARCHAR2(10),
+  8  constraint PK_Dokter primary key (Id_dokter)
+  9  );
+
+SQL> create table Rekamedik_07083
+  2  (
+  3  No_rekamedik       INTEGER         not null,
+  4  Id_poli            INTEGER,
+  5  Id_pasien          INTEGER,
+  6  Berat_badan        VARCHAR2(5),
+  7  Suhu_tubuh         VARCHAR2(6),
+  8  Keluhan            VARCHAR2(30),
+  9  Tinggi_badan       INTEGER,
+ 10  Tanggal_kedatangan DATE,
+ 11  Tekanan_darah      VARCHAR2(10),
+ 12  constraint PK_Rekamedik primary key (No_rekamedik)
+ 13  );
+
+SQL> alter table Poli_07083
+  2  add constraint FK_Id_dokter FOREIGN KEY (Id_dokter)
+  3  references Dokter_07083(Id_dokter);
+
+SQL> alter table Rekamedik_07083
+  2  add constraint FK_Id_poli FOREIGN KEY (Id_poli)
+  3  references Poli_07083(Id_poli)
+  4  add constraint FK_Id_pasien FOREIGN KEY (Id_pasien)
+  5  references Pasien_07083(Id_pasien);
+
+SQL> create sequence Id_pasien
+  2  minvalue 1
+  3  maxvalue 100
+  4  start with 1
+  5  increment by 1
+  6  cache 20;
+
+SQL> alter table Poli_07083 rename column Nama_poli to namapoli_07083;
+
+SQL> alter table Pasien_07083 add constraint notlpn unique (notlpn);
+
+SQL> alter table Pasien_07083 modify(notlpn char(12));
+
+
+		MODUL 2
+
+
+SQL> insert into Pasien_07083
+  2  (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values
+  3  (Id_pasien.nextval, 'gigih', '27', '7654321098', to_date('23/05/1993','dd/mm/yyyy'), 'laki-laki', 'Banyuwangi');
+
+SQL> insert into Pasien_07083
+  2  (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values
+  3  (Id_pasien.nextval, 'galuh', '20', '6543210987', to_date('27/09/2000','dd/mm/yyyy'), 'perempuan', 'Bandung');
+
+
+SQL> update Pasien_07083
+  2  set Nama_pasien = 'inggit',
+  3  Umur_pasien = '23',
+  4  Notlpn = '8347836576',
+  5  TTL = to_date('23/12/1997','dd/mm/yyyy'),
+  6  Jenis_kelamin = 'perempuan',
+  7  Alamat_pasien = 'Bekasi'
+  8  where Id_pasien = 1;
+
+SQL> update Pasien_07083
+  2  set Nama_pasien = 'ita',
+  3  Umur_pasien = '22',
+  4  Notlpn = '8347836579',
+  5  TTL = to_date('20/10/1998','dd/mm/yyyy'),
+  6  Jenis_kelamin = 'perempuan',
+  7  Alamat_pasien = 'Solo'
+  8  where Id_pasien = 2;
+
+SQL> update Dokter_07083
+  2  set Nama_dokter = 'geri',
+  3  Spesialis = 'dokter telinga',
+  4  TTL = to_date('23/07/1979','dd/mm/yyyy'),
+  5  Jenis_kelamin = 'laki-laki'
+  6  where Id_dokter = 1;
+
+SQL> update Poli_07083
+  2  set Id_dokter = '1',
+  3  Namapoli_07083 = 'poli THT',
+  4  Keterangan_poli = 'mengobati sakit telinga hidung tenggorokan'
+  5  where Id_poli = 1;
+
+SQL> update Rekamedik_07083
+  2  set Id_poli = '1',
+  3  Id_pasien = '1',
+  4  Berat_badan = '56',
+  5  Suhu_tubuh = '32',
+  6  Keluhan = 'Sakit telinga',
+  7  Tinggi_badan = '156',
+  8  Tanggal_kedatangan = to_date('18/11/2019','dd/mm/yyyy'),
+  9  Tekanan_darah = '80/120'
+ 10  where No_rekamedik = 1;
+
+
+SQL> select Nama_pasien, Alamat_pasien from Pasien_07083 where Id_pasien like '1%';
+
+SQL> select Nama_pasien, Alamat_pasien from Pasien_07083 where Nama_pasien like 'i%';
+
+SQL> select Nama_dokter, Spesialis from Dokter_07083 where Nama_dokter like 'g%';
+
+SQL> select Namapoli_07083, Keterangan_poli from Poli_07083 where Id_poli like '1%';
+
+SQL> select Id_pasien, Id_poli, Tanggal_kedatangan from Rekamedik_07083 where No_rekamedik like '1%';
+
+
+SQL> select * from Pasien_07083
+  2  where Nama_pasien = 'inggit'
+  3  and Id_pasien <=2
+  4  or Alamat_pasien = 'Bekasi';
+
+SQL> select * from Pasien_07083
+  2  where Id_pasien is not null
+  3  and id_pasien < 2;
+
+SQL> select * from Dokter_07083
+  2  where Nama_dokter = 'geri'
+  3  and Spesialis = 'dokter telinga'
+  4  or Id_dokter is not null;
+
+SQL> select * from Poli_07083
+  2  where Namapoli_07083 = 'poli THT'
+  3  or Id_poli = 1
+  4  and Id_dokter = 1;
+
+SQL> select * from Rekamedik_07083
+  2  where Id_pasien = 1
+  3  or Tanggal_kedatangan = to_date('18/11/2019','dd/mm/yyyy')
+  4  and No_rekamedik is not null;
+
+
+SQL> savepoint baru;
+
+SQL> rollback to baru;
+
+SQL> commit;
+
+
+SQL> delete from Rekamedik_07083
+  2  where No_rekamedik > 1
+  3  and Tanggal_kedatangan = to_date('19/10/2019','dd/mm/yyyy')
+  4  or Id_pasien = 4;
+
+SQL> delete from Rekamedik_07083
+  2  where Id_poli between '2' and '5';
+
+SQL> delete from Rekamedik_07083
+  2  where Id_poli = 1
+  3  or Berat_badan is null;
+
+
+SQL> select * from Pasien_07083 order by Nama_pasien asc;
+
+SQL> select Alamat_pasien from Pasien_07083 group by Alamat_pasien;
+
+
+		MODUL 3
+
+
+SQL> insert all
+  2  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (21, 'bagas', '19', '54436231', to_date('20/08/2001','dd/mm/yyyy'), 'laki-laki', 'Jogja')
+  3  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (22, 'reno', '29', '54436271', to_date('13/05/1991','dd/mm/yyyy'), 'laki-laki', 'Jember')
+  4  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (23, 'rendi', '26', '544362561', to_date('17/04/1994','dd/mm/yyyy'), 'laki-laki', 'Surabaya')
+  5  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (24, 'rei', '29', '54496261', to_date('10/08/1991','dd/mm/yyyy'), 'laki-laki', 'Solo')
+  6  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (25, 'roi', '21', '5496261', to_date('16/04/1999','dd/mm/yyyy'), 'laki-laki', 'Semarang')
+  7  select 1 from dual;
+
+SQL> insert all
+  2  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (11, 'redo', 'dokter mata', to_date('03/09/1969','dd/mm/yyyy'), 'laki-laki')
+  3  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (12, 'rafi', 'dokter gigi', to_date('09/09/1962','dd/mm/yyyy'), 'laki-laki')
+  4  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (13, 'gina', 'dokter jantung', to_date('08/08/1978','dd/mm/yyyy'), 'perempuan')
+  5  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (14, 'muji', 'dokter anak', to_date('04/08/1979','dd/mm/yyyy'), 'laki-laki')
+  6  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (15, 'mahmud', 'dokter jiwa', to_date('03/03/1978','dd/mm/yyyy'), 'laki-laki')
+  7  select 1 from dual;
+
+SQL> insert all
+  2  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (11, 11, 'Poli mata', 'Menangani sakit mata')
+  3  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (12, 12, 'Poli gigi', 'Menangani sakit gigi')
+  4  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (13, 13, 'Poli jantung', 'Menangani sakit jantung')
+  5  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (14, 14, 'Poli anak', 'Menangani sakit pada anak')
+  6  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (15, 15, 'Poli jiwa', 'Menangani sakit kejiwaan')
+  7  select 1 from dual;
+
+SQL> insert all
+  2  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (11, 11, 21, '50', '32', 'sakit mata', '150', to_date('02/12/2019','dd/mm/yyyy'), '80/120')
+  3  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (12, 12, 22, '58', '34', 'cabut gigi', '167', to_date('06/12/2019','dd/mm/yyyy'), '80/122')
+  4  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (13, 13, 23, '60', '32', 'sakit jantung', '169', to_date('08/12/2019','dd/mm/yyyy'), '88/122')
+  5  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (14, 14, 24, '36', '35', 'sakit demam', '135', to_date('10/12/2019','dd/mm/yyyy'), '80/120')
+  6  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (15, 15, 25, '56', '33', 'sakit trauma', '167', to_date('15/12/2019','dd/mm/yyyy'), '80/120')
+  7  select 1 from dual;
+
+
+SQL> select No_rekamedik, max(Berat_badan) as
+  2  terberat, min(Berat_badan) as teringan from Rekamedik_07083
+  3  group by No_rekamedik;
+
+SQL> select Id_pasien, count(Id_pasien) as Kunjungan
+  2  from Pasien_07083 where Id_pasien = 2 and Id_pasien = 5 or Nama_pasien = 'doni' group by Id_pasien;
+
+SQL> select sum(Berat_badan) as TotalBerat from Rekamedik_07083;
+
+SQL> select avg(Berat_badan) as RataBeratBadan from Rekamedik_07083;
+
+
+SQL> select Keterangan_poli, Namapoli_07083, (select max(Id_poli) from Poli_07083
+  2  where Poli_07083.Id_poli = Poli_07083.Id_poli)
+  3  as IDPoli from Poli_07083 where Id_poli = 5;
+
+SQL> select Keterangan_poli, Namapoli_07083, (select min(Id_poli) from Poli_07083
+  2  where Poli_07083.Id_poli = Poli_07083.Id_poli)
+  3  as IDPoli from Poli_07083 where Id_poli = 2;
+
+SQL> select Nama_dokter, (select count(Id_poli) as ID_Poli from Poli_07083
+  2  where Id_poli = 5 and Id_poli = 6 or Id_poli < 10)
+  3  as ID_Poli from Dokter_07083;
+
+SQL> select No_rekamedik, (select sum(Tinggi_badan) as TotalTinggiBadan from Rekamedik_07083
+  2  where No_rekamedik = 8)
+  3  as TotalTinggiBadan from Rekamedik_07083 where No_rekamedik = 8;
+
+SQL> select No_rekamedik, (select avg(Tinggi_badan) as RatarataTinggiBadan from Rekamedik_07083 where No_rekamedik = 8)
+  2  as RatarataTinggiBadan from Rekamedik_07083 where No_rekamedik = 8;
+
+SQL> select Namapoli_07083, sum(Id_poli) as ID_Poli
+  2  from Poli_07083 group by Namapoli_07083;
+
+SQL> select Id_poli, Id_dokter from Poli_07083 where Id_dokter =
+  2  (select Id_dokter from Dokter_07083 where Nama_dokter = 'sana');
+
+SQL> select (select count(*) from Rekamedik_07083) as "Jumlah_pengunjung",
+  2  (select count(*) from Pasien_07083) as "Jumlah_pasien",
+  3  (select distinct count(Id_poli) from Poli_07083) as "Jumlah_poli" from dual;
+
+
+		MODUL 4
+
+
+SQL> insert all
+  2  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (26, 'bos', '19', '94436231', to_date('29/06/2001','dd/mm/yyyy'), 'laki-laki', 'Jogja')
+  3  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (27, 'geri', '16', '94434231', to_date('22/04/2004','dd/mm/yyyy'), 'laki-laki', 'Jember')
+  4  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (28, 'galuh', '13', '90434231', to_date('22/08/2007','dd/mm/yyyy'), 'perempuan', 'Jombang')
+  5  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (29, 'johan', '20', '0434231', to_date('24/02/1991','dd/mm/yyyy'), 'laki-laki', 'Surabaya')
+  6  into Pasien_07083 (Id_pasien, Nama_pasien, Umur_pasien, Notlpn, TTL, Jenis_kelamin, Alamat_pasien) values (30, 'jihan', '20', '0434531', to_date('24/02/1991','dd/mm/yyyy'), 'perempuan', 'Surabaya')
+  7  select 1 from dual;
+
+SQL> insert all
+  2  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (16, 'besta', 'dokter THT', to_date('09/09/1989','dd/mm/yyyy'), 'laki-laki')
+  3  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (17, 'galih', 'dokter kandungan', to_date('03/06/1979','dd/mm/yyyy'), 'laki-laki')
+  4  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (18, 'gendis', 'dokter jantung', to_date('01/08/1969','dd/mm/yyyy'), 'perempuan')
+  5  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (19, 'cici', 'dokter umum', to_date('09/04/1979','dd/mm/yyyy'), 'perempuan')
+  6  into Dokter_07083 (Id_dokter, Nama_dokter, Spesialis, TTL, Jenis_kelamin) values (20, 'santi', 'dokter anak', to_date('09/09/1979','dd/mm/yyyy'), 'perempuan')
+  7  select 1 from dual;
+
+SQL> insert all
+  2  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (16, 16, 'Poli THT', 'Menangani sakit telinga')
+  3  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (17, 17, 'Poli kandungan', 'Menangani ibu melahirkan')
+  4  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (18, 18, 'Poli jantung', 'Menangani sakit jantung')
+  5  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (19, 19, 'Poli umum', 'Menangani sakit umum')
+  6  into Poli_07083 (Id_poli, Id_dokter, Namapoli_07083, Keterangan_poli) values (20, 20, 'Poli anak', 'Menangani sakit pada anak')
+  7  select 1 from dual;
+
+SQL> insert all
+  2  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (16, 16, 26, '51', '32', 'sakit telinga', '150', to_date('02/01/2020','dd/mm/yyyy'), '80/120')
+  3  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (17, 17, 27, '53', '32', 'melahirkan', '150', to_date('05/01/2020','dd/mm/yyyy'), '80/120')
+  4  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (18, 18, 28, '54', '32', 'sakit jantung', '154', to_date('07/01/2020','dd/mm/yyyy'), '85/120')
+  5  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (19, 19, 29, '53', '32', 'sakit pilek', '158', to_date('08/01/2020','dd/mm/yyyy'), '80/120')
+  6  into Rekamedik_07083 (No_rekamedik, Id_poli, Id_pasien, Berat_badan, Suhu_tubuh, Keluhan, Tinggi_badan, Tanggal_kedatangan, Tekanan_darah) values (20, 20, 30, '52', '32', 'sakit cacar', '154', to_date('10/01/2020','dd/mm/yyyy'), '80/120')
+  7  select 1 from dual;
+
+SQL> select a.Nama_pasien, b.Namapoli_07083
+  2  from Pasien_07083 a join
+  3  Poli_07083 b
+  4  on a.Id_pasien = b.Id_poli
+  5  where b.Id_poli <=10;
+
+
+SQL> select a.Nama_pasien, c.Keluhan, b.Keterangan_poli, (select count(*) from Rekamedik_07083) as Total_Kunjungan
+  2  from Pasien_07083 a
+  3  left join Poli_07083 b
+  4  left join Rekamedik_07083 c
+  5  on b.Id_poli = c.No_rekamedik
+  6  on a.Id_pasien = c.No_rekamedik;
+
+
+SQL> select a.No_rekamedik, b.Nama_pasien, c.Namapoli_07083
+  2  from Rekamedik_07083 a
+  3  right join Pasien_07083 b
+  4  on a.Id_pasien = b.Id_pasien
+  5  right join Poli_07083 c
+  6  on a.Id_poli = c.Id_poli
+  7  where No_rekamedik <= (select count(No_rekamedik) from Rekamedik_07083
+  8  where No_rekamedik < (select max(No_rekamedik) from Rekamedik_07083)
+  9  and No_rekamedik > (select min(No_rekamedik) from Rekamedik_07083));
+
+
+SQL> create view list_dokter
+  2  as select Id_dokter, Nama_dokter, Spesialis
+  3  from Dokter_07083;
+
+SQL> insert into list_dokter (Id_dokter, Nama_dokter, Spesialis)
+  2  values (30, 'Rendi', 'Menangani sakit jantung');
+
+
+SQL> create view kunjungan_pasien_ke_poli
+  2  as select a.Nama_pasien, b.Namapoli_07083
+  3  from Pasien_07083 a join
+  4  Poli_07083 b
+  5  on a.Id_pasien = b.Id_poli
+  6  where b.Id_poli <=10;
+
+
+SQL> create view keluhan_pasien
+  2  as select a.Nama_pasien, c.Keluhan, b.Keterangan_poli, (select count(*) from Rekamedik_07083) as Total_Kunjungan
+  3  from Pasien_07083 a
+  4  left join Poli_07083 b
+  5  left join Rekamedik_07083 c
+  6  on b.Id_poli = c.No_rekamedik
+  7  on a.Id_pasien = c.No_rekamedik;
+
+
+SQL> create view daftar_pasien_berobat
+  2  as select a.No_rekamedik, b.Nama_pasien, c.Namapoli_07083
+  3  from Rekamedik_07083 a
+  4  right join Pasien_07083 b
+  5  on a.Id_pasien = b.Id_pasien
+  6  right join Poli_07083 c
+  7  on a.Id_poli = c.Id_poli
+  8  where No_rekamedik <= (select count(No_rekamedik) from Rekamedik_07083
+  9  where No_rekamedik < (select max(No_rekamedik) from Rekamedik_07083)
+ 10  and No_rekamedik > (select min(No_rekamedik) from Rekamedik_07083));
+
+
+SQL> insert into kunjungan_pasien_ke_poli (Nama_pasien, Namapoli_07083)
+  2  values ('Gendis', 'Poli mata');
+
+
+SQL> insert into keluhan_pasien (Nama_pasien, Keterangan_poli, Keluhan)
+  2  values ('Sari', 'mengobati sakit telinga', 'sakit telinga');
+
+
+SQL> insert into daftar_pasien_berobat (No_rekamedik, Nama_pasien, Namapoli_07083)
+  2  values (30, 'Gea', 'Poli mata');
+
+
+		MODUL 5
+
+
+SQL> create view data_poli
+  2  as select a.ID_POLI, a.NAMAPOLI_07083, a.KETERANGAN_POLI, b.NAMA_DOKTER
+  3  FROM Poli_07083 a
+  4  JOIN Dokter_07083 b
+  5  ON a.ID_POLI = b.ID_DOKTER;
+
+SELECT REKAMEDIK_07083.*, PASIEN_07083.*, POLI_07083.*  "
+                + "FROM REKAMEDIK_07083 JOIN PASIEN_07083 ON REKAMEDIK_07083.ID_PASIEN = PASIEN_07083.ID_PASIEN"
+                + "JOIN POLI_07083 ON REKAMEDIK_07083.ID_POLI = POLI_07083.ID_POLI
+
